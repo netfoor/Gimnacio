@@ -1,3 +1,38 @@
+// ==================== COVER PAGE FUNCTIONALITY ====================
+const coverPage = document.querySelector('.cover-page');
+const enterBtn = document.getElementById('enterBtn');
+
+// Hide cover page when enter button is clicked
+if (enterBtn) {
+    enterBtn.addEventListener('click', () => {
+        coverPage.classList.add('hidden');
+        // Enable scrolling on body
+        document.body.style.overflow = 'auto';
+        // Store in sessionStorage to not show again during this session
+        sessionStorage.setItem('coverPageSeen', 'true');
+    });
+}
+
+// Check if cover page was already seen in this session
+if (sessionStorage.getItem('coverPageSeen')) {
+    if (coverPage) {
+        coverPage.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+} else {
+    // Disable scrolling while cover page is visible
+    document.body.style.overflow = 'hidden';
+}
+
+// Also allow clicking anywhere on cover to enter
+if (coverPage) {
+    coverPage.addEventListener('click', (e) => {
+        if (e.target === coverPage || e.target.classList.contains('cover-overlay') || e.target.classList.contains('scroll-hint')) {
+            enterBtn.click();
+        }
+    });
+}
+
 // ==================== NAVIGATION FUNCTIONALITY ====================
 const navbar = document.getElementById('navbar');
 const hamburger = document.getElementById('hamburger');
