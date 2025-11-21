@@ -1,0 +1,47 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Se ejecuta en push a la rama main
+  push:
+    branches: [ main ]
+  
+  # Permite ejecutar este workflow manualmente desde la pestaña Actions
+  workflow_dispatch:
+
+# Establece permisos del GITHUB_TOKEN para permitir deployment a GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permite solo un deployment concurrente, omitiendo runs en queue entre el run en progreso y el último en queue.
+# Sin embargo, NO cancela runs en progreso ya que queremos permitir que estos deployments de producción se completen.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Job de deployment
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Sube todo el repositorio
+          path: '.'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
